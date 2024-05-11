@@ -28,12 +28,25 @@ async function run() {
 
     // Mongodb data collections
     const featuresCollection = client.db('assignmentGeniusDB').collection('features');
+    const assignmentsCollection = client.db('assignmentGeniusDB').collection('assignments');
 
+    // -------------------------------
+    // Features related API
     // Read features from the database
     app.get('/features', async(req, res) => {
       const result = await featuresCollection.find().toArray();
       res.send(result);
     })
+
+    // --------------------------------
+    // Assignment related API
+    // Create assignment to the database
+    app.post('/assignments', async(req, res) => {
+      const newAssignment = req.body;
+      console.log(newAssignment);
+      const result = await assignmentsCollection.insertOne(newAssignment);
+      res.send(result);
+    });
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
