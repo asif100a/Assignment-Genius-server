@@ -1,7 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const app = express();
 const port = process.env.PORT || 5000;
 
@@ -42,7 +42,14 @@ async function run() {
     // Assignment related API
     // Read the assignments data from the database
     app.get('/assignments', async(req, res) => {
-      const result = await assignmentsCollection.find().toArray();
+      const sortBy = req.query.sortBy;
+      console.log(sortBy)
+
+      let filter = {};
+      if(sortBy) {
+        filter = {level: sortBy} 
+      }
+      const result = await assignmentsCollection.find(filter).toArray();
       res.send(result);
     });
 
@@ -53,6 +60,16 @@ async function run() {
       const result = await assignmentsCollection.insertOne(newAssignment);
       res.send(result);
     });
+
+    // Delete specific assignment from the database
+    app.delete('/assignments/:id', async(req, res) => {
+      const id = req.params.id;
+      const filter = {_id: new ObjectId(id)};
+      const result = await assignmentsCollection.deleteOne(filter);
+      res.send(result);
+    });
+
+
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
