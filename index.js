@@ -40,6 +40,12 @@ async function run() {
 
     // --------------------------------
     // Assignment related API
+    // Read the assignments data from the database
+    app.get('/assignments', async(req, res) => {
+      const result = await assignmentsCollection.find().toArray();
+      res.send(result);
+    });
+
     // Create assignment to the database
     app.post('/assignments', async(req, res) => {
       const newAssignment = req.body;
