@@ -29,6 +29,7 @@ async function run() {
     // Mongodb data collections
     const featuresCollection = client.db('assignmentGeniusDB').collection('features');
     const assignmentsCollection = client.db('assignmentGeniusDB').collection('assignments');
+    const submittedAssignmentCollection = client.db('assignmentGeniusDB').collection('submittedAssignments')
 
     // -------------------------------
     // Features related API
@@ -52,6 +53,15 @@ async function run() {
       const result = await assignmentsCollection.find(filter).toArray();
       res.send(result);
     });
+
+    // Read specific data from the database
+    app.get('/assignment_details/:id', async(req, res) => {
+      const id = req.params.id;
+      console.log(id)
+      const query = {_id: new ObjectId(id)};
+      const result = await assignmentsCollection.findOne(query);
+      res.send(result);
+    })
 
     // Create assignment to the database
     app.post('/assignments', async(req, res) => {
@@ -79,6 +89,19 @@ async function run() {
         $set: {...assignment}
       };
       const result = await assignmentsCollection.updateOne(filter, updatedDoc, options);
+      res.send(result);
+    });
+
+    // Read the submitted assignments from the database
+    app.get('/submittedAssignments', async(req, res) => {
+      const result = await submittedAssignmentCollection.find().toArray();
+      res.send(result);
+    });
+
+    // Create submitted assignment to the database
+    app.post('/submittedAssignments', async(req, res) => {
+      const submittedAssignment = req.body;
+      const result = await submittedAssignmentCollection.insertOne(submittedAssignment);
       res.send(result);
     });
 
