@@ -98,6 +98,15 @@ async function run() {
       res.send(result);
     });
 
+    // Read the specific assignments based on the email
+    app.get('/my_submitted_assignments/:email', async(req, res) => {
+      const email = req?.params?.email;
+      console.log(email)
+      const filter = {'examinee.email': email};
+      const result = await submittedAssignmentCollection.find(filter).toArray();
+      res.send(result);
+    })
+
     // Create submitted assignment to the database
     app.post('/submittedAssignments', async(req, res) => {
       const submittedAssignment = req.body;
