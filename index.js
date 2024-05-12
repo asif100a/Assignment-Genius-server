@@ -69,6 +69,19 @@ async function run() {
       res.send(result);
     });
 
+    // Update specific assignments to the database
+    app.put('/assignments/:id', async(req, res) => {
+      const id = req.params.id;
+      const filter = {_id: new ObjectId(id)};
+      const options = {upsert: true};
+      const assignment = req.body;
+      const updatedDoc = {
+        $set: {...assignment}
+      };
+      const result = await assignmentsCollection.updateOne(filter, updatedDoc, options);
+      res.send(result);
+    });
+
 
 
     // Send a ping to confirm a successful connection
