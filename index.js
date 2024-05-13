@@ -93,8 +93,10 @@ async function run() {
     });
 
     // Read the submitted assignments from the database
-    app.get('/submittedAssignments', async(req, res) => {
-      const result = await submittedAssignmentCollection.find().toArray();
+    app.get('/submittedAssignments/:pendingAssignments', async(req, res) => {
+      const pendingAssignments = req.params.pendingAssignments;
+      const filter = {status: pendingAssignments};
+      const result = await submittedAssignmentCollection.find(filter).toArray();
       res.send(result);
     });
 
