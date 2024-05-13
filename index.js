@@ -114,6 +114,24 @@ async function run() {
       res.send(result);
     });
 
+    // Update the submitted assignment after giving marks
+    app.put('/submittedAssignments/:id', async(req, res) => {
+      const id = req.params.id;
+      const filter = {_id: new ObjectId(id)};
+      const updatedMark = req.body;
+      const options = {upsert: true};
+      const updatedDoc = {
+        $set: {
+          obtained_mark: updatedMark?.obtained_mark,
+          feedback: updatedMark?.feedback,
+          status: updatedMark?.markStatus,
+          examinerEmail: updatedMark?.examinerEmail
+        }
+      };
+      const result = await submittedAssignmentCollection.updateOne(filter, updatedDoc, options);
+      res.send(result);
+    });
+
 
 
     // Send a ping to confirm a successful connection
