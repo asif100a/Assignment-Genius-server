@@ -46,13 +46,20 @@ async function run() {
     const submittedAssignmentCollection = client.db('assignmentGeniusDB').collection('submittedAssignments')
 
     // ==============[Jwt Token API]=============
+    // Set the token to the cookie during sign in or register
     app.post('/jwt', (req, res) => {
       const user = req.body;
-      console.log('Token user:', user);
       const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '7d' });
 
       res
         .cookie('token', token, cookieOptions)
+        .send({ success: true });
+    });
+
+    // Clear the token from the cookie after sign out
+    app.post('/sign_out', (req, res) => {
+      res
+        .clearCookie('token', { ...cookieOptions, maxAge: 0 })
         .send({ success: true });
     });
 
